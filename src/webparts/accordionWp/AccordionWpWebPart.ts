@@ -1,127 +1,158 @@
-import { Version } from '@microsoft/sp-core-library';
 import {
   IPropertyPaneConfiguration,
+  PropertyPaneButton,
+  PropertyPaneButtonType,
   PropertyPaneTextField
 } from '@microsoft/sp-property-pane';
-import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
-import { IReadonlyTheme } from '@microsoft/sp-component-base';
-import { escape } from '@microsoft/sp-lodash-subset';
 
-import styles from './AccordionWpWebPart.module.scss';
+import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
+
 import * as strings from 'AccordionWpWebPartStrings';
+
+import * as jQuery from 'jquery';
+import 'jqueryui';
+
+import { Modal } from 'dattatable';
+
+import { SPComponentLoader } from '@microsoft/sp-loader';
 
 export interface IAccordionWpWebPartProps {
   description: string;
+  accordionHtml: string;
+  accordionTitle: string;
 }
 
 export default class AccordionWpWebPart extends BaseClientSideWebPart<IAccordionWpWebPartProps> {
 
-  private _isDarkTheme: boolean = false;
-  private _environmentMessage: string = '';
+  public constructor() {
+    super();
+  
+    SPComponentLoader.loadCss('//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css');
+  }  
 
   public render(): void {
+
     this.domElement.innerHTML = `
-    <section class="${styles.accordionWp} ${!!this.context.sdks.microsoftTeams ? styles.teams : ''}">
-      <div class="${styles.welcome}">
-        <img alt="" src="${this._isDarkTheme ? require('./assets/welcome-dark.png') : require('./assets/welcome-light.png')}" class="${styles.welcomeImage}" />
-        <h2>Well done, ${escape(this.context.pageContext.user.displayName)}!</h2>
-        <div>${this._environmentMessage}</div>
-        <div>Web part property value: <strong>${escape(this.properties.description)}</strong></div>
+      ${this.properties.accordionTitle}
+      <div class="accordion">
+        ${this.properties.accordionHtml}
       </div>
-      <div>
-        <h3>Welcome to SharePoint Framework!</h3>
-        <p>
-        The SharePoint Framework (SPFx) is a extensibility model for Microsoft Viva, Microsoft Teams and SharePoint. It's the easiest way to extend Microsoft 365 with automatic Single Sign On, automatic hosting and industry standard tooling.
-        </p>
-        <h4>Learn more about SPFx development:</h4>
-          <ul class="${styles.links}">
-            <li><a href="https://aka.ms/spfx" target="_blank">SharePoint Framework Overview</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-graph" target="_blank">Use Microsoft Graph in your solution</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-teams" target="_blank">Build for Microsoft Teams using SharePoint Framework</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-viva" target="_blank">Build for Microsoft Viva Connections using SharePoint Framework</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-store" target="_blank">Publish SharePoint Framework applications to the marketplace</a></li>
-            <li><a href="https://aka.ms/spfx-yeoman-api" target="_blank">SharePoint Framework API reference</a></li>
-            <li><a href="https://aka.ms/m365pnp" target="_blank">Microsoft 365 Developer Community</a></li>
-          </ul>
-      </div>
-    </section>`;
-  }
+    `;
 
-  protected onInit(): Promise<void> {
-    return this._getEnvironmentMessage().then(message => {
-      this._environmentMessage = message;
-    });
-  }
-
-
-
-  private _getEnvironmentMessage(): Promise<string> {
-    if (!!this.context.sdks.microsoftTeams) { // running in Teams, office.com or Outlook
-      return this.context.sdks.microsoftTeams.teamsJs.app.getContext()
-        .then(context => {
-          let environmentMessage: string = '';
-          switch (context.app.host.name) {
-            case 'Office': // running in Office
-              environmentMessage = this.context.isServedFromLocalhost ? strings.AppLocalEnvironmentOffice : strings.AppOfficeEnvironment;
-              break;
-            case 'Outlook': // running in Outlook
-              environmentMessage = this.context.isServedFromLocalhost ? strings.AppLocalEnvironmentOutlook : strings.AppOutlookEnvironment;
-              break;
-            case 'Teams': // running in Teams
-              environmentMessage = this.context.isServedFromLocalhost ? strings.AppLocalEnvironmentTeams : strings.AppTeamsTabEnvironment;
-              break;
-            default:
-              throw new Error('Unknown host');
-          }
-
-          return environmentMessage;
-        });
-    }
-
-    return Promise.resolve(this.context.isServedFromLocalhost ? strings.AppLocalEnvironmentSharePoint : strings.AppSharePointEnvironment);
-  }
-
-  protected onThemeChanged(currentTheme: IReadonlyTheme | undefined): void {
-    if (!currentTheme) {
-      return;
-    }
-
-    this._isDarkTheme = !!currentTheme.isInverted;
-    const {
-      semanticColors
-    } = currentTheme;
-
-    if (semanticColors) {
-      this.domElement.style.setProperty('--bodyText', semanticColors.bodyText || null);
-      this.domElement.style.setProperty('--link', semanticColors.link || null);
-      this.domElement.style.setProperty('--linkHovered', semanticColors.linkHovered || null);
-    }
-
-  }
-
-  protected get dataVersion(): Version {
-    return Version.parse('1.0');
-  }
-
-  protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
-    return {
-      pages: [
-        {
-          header: {
-            description: strings.PropertyPaneDescription
-          },
-          groups: [
-            {
-              groupName: strings.BasicGroupName,
-              groupFields: [
-                PropertyPaneTextField('description', {
-                  label: strings.DescriptionFieldLabel
-                })
-              ]
-            }
-          ]
-        }
-      ]
+    const accordionOptions: JQueryUI.AccordionOptions = {
+      animate: true,
+      collapsible: false,
+      icons: {
+        header: 'ui-icon-circle-arrow-e',
+        activeHeader: 'ui-icon-circle-arrow-s'
+      }
     };
+
+    jQuery('.accordion', this.domElement).accordion(accordionOptions);    
+
   }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private ButtonClick(oldVal: any): any {
+      this.properties.accordionTitle = "Testing My New Accordion Title";
+
+      Modal.setHeader("<b>Accordion Web Part Details");
+
+      Modal.setBody(`
+<table style='font-family: Arial' width='100%' border='1'>
+<tr>
+  <td valign='top'><b>Description:</b></td>
+  <td>
+    The <span style='font-weight: bold; color: darkblue'>Accordion Web Part</span> implements a simple way to present Sections in a Collapsed or Expanded manner.
+    <br /><br />
+    Each Section has a Header and the Section's Details. Adjacent to the Header is
+    an arrow Icon which the user can click to Expand the Section. The <strong><u>Web Part's Properties</u></strong> are used to define the Sections.
+  </td>
+</tr>
+<tr><td colspan="2">
+  <hr />
+  <b>Web Part Properties:</b>
+  <hr />
+  </td>
+</tr>
+<tr>
+  <td align='right' valign='top'>&nbsp;&nbsp;&nbsp;&nbsp;<b>accordionTitle:</b></td>
+  <td>If defined, displays a Title for the Accordion Web Part</td>
+</tr>
+<tr>
+  <td align='right' valign='top'>&nbsp;&nbsp;&nbsp;&nbsp;<b>accordionHtml:</b></td>
+  <td>
+    Defines each section as an 'H3' header and a 'div'.	<br /><br />
+    For Example:
+    <hr />
+    &lt;h3&gt;Section One Title&lt;/h3&gt;<br />
+    &nbsp;&nbsp;&lt;div&gt;<br />
+	  &nbsp;&nbsp;&nbsp;&nbsp;Section One Line One<br />
+	  &nbsp;&nbsp;&nbsp;&nbsp;Section One Line Two<br />
+	  &nbsp;&nbsp;&nbsp;&nbsp;Section One Line Three<br />
+    &nbsp;&nbsp;&lt;/div&gt;<br />
+    &lt;h3&gt;Section Two Title&lt;/h3&gt;&lt;div&gt;Section Two Text&lt;/div&gt;<br />
+    &lt;h3&gt;Section Three Title&lt;/h3&gt;&lt;div&gt;Section Three Text&lt;/div&gt;<br />
+    <hr />
+    Displays as the following:
+    <hr />
+    Accordion Title
+    <hr />
+    &#8595&nbsp;Section One Title<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Section One Line One<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Section One Line Two<br />
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Section One Line Three<br />
+    &#8594&nbsp;Section Two Title<br />
+    &#8594&nbsp;Section Three Title<br />
+  </td>
+</tr>
+</table>
+`)
+      Modal.setFooter("");
+
+      Modal.show();
+
+      return "test"
+    }
+
+    protected getPropertyPaneConfiguration(): IPropertyPaneConfiguration {
+      return {
+        pages: [
+          {
+            header: {
+              description: strings.PropertyPaneDescription
+            },
+  
+            groups: [
+              {
+                groupName: "Accordion Details",
+                groupFields: [
+                  PropertyPaneButton('Click Here', 
+                    {
+                      text: "Web Part Details",
+                      buttonType: PropertyPaneButtonType.Normal,
+                      onClick: this.ButtonClick.bind(this)
+                    }),
+                  PropertyPaneTextField('accordionTitle', {
+                    label: "Accordion Title",
+                    multiline: false,
+                    resizable: false,
+                    deferredValidationTime: 5000,
+                    placeholder: "Please enter Accordion Title", "description": "accordionTitle property field"
+                  }),
+                  PropertyPaneTextField('accordionHtml', {
+                    label: "Accordion HTML",
+                    multiline: true,
+                    resizable: true,
+                    rows: 40,
+                    deferredValidationTime: 5000,
+                    placeholder: "Please enter Accordion HTML", "description": "accordionHtml property field"
+                  })
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    }
 }
