@@ -56,7 +56,7 @@ export default class AccordionWpWebPart extends BaseClientSideWebPart<IAccordion
     private ButtonClick(oldVal: any): any {
       this.properties.accordionTitle = "Testing My New Accordion Title";
 
-      Modal.setHeader("<b>Accordion Web Part Details");
+      Modal.setHeader("<b>Accordion Web Part Details</ b>");
 
       Modal.setBody(`
 <table style='font-family: Arial' width='100%' border='1'>
