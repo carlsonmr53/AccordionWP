@@ -63,7 +63,7 @@ export default class AccordionWpWebPart extends BaseClientSideWebPart<IAccordion
 <tr>
   <td valign='top'><b>Description:</b></td>
   <td>
-    The <span style='font-weight: bold; color: darkblue'>Accordion Web Part</span> implements a simple way to present Sections in a Collapsed or Expanded manner.
+    The <span style='font-weight: bold; color: red'>Accordion Web Part</span> implements a simple way to present Sections in a Collapsed or Expanded manner.
     <br /><br />
     Each Section has a Header and the Section's Details. Adjacent to the Header is
     an arrow Icon which the user can click to Expand the Section. The <strong><u>Web Part's Properties</u></strong> are used to define the Sections.
