@@ -1,0 +1,40 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/package-solution.schema.json",
+  "solution": {
+    "name": "accordion-wp-client-side-solution",
+    "id": "c9d13037-c956-4dbb-b8bf-4d8c697fa017",
+    "version": "1.0.0.0",
+    "includeClientSideAssets": true,
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "developer": {
+      "name": "",
+      "websiteUrl": "",
+      "privacyUrl": "",
+      "termsOfUseUrl": "",
+      "mpnId": "Undefined-1.17.1"
+    },
+    "metadata": {
+      "shortDescription": {
+        "default": "accordion-wp description"
+      },
+      "longDescription": {
+        "default": "accordion-wp description"
+      },
+      "screenshotPaths": [],
+      "videoUrl": "",
+      "categories": []
+    },
+    "features": [
+      {
+        "title": "accordion-wp Feature",
+        "description": "The feature that activates elements of the accordion-wp solution.",
+        "id": "aa26a306-4dc1-48b4-8c4e-bcc8c5611553",
+        "version": "1.0.0.0"
+      }
+    ]
+  },
+  "paths": {
+    "zippedPackage": "solution/accordion-wp.sppkg"
+  }
+}

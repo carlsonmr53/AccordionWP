@@ -1,0 +1,21 @@
+{
+  "@microsoft/generator-sharepoint": {
+    "plusBeta": false,
+    "isCreatingSolution": true,
+    "nodeVersion": "16.20.0",
+    "sdksVersions": {
+      "@microsoft/microsoft-graph-client": "3.0.2",
+      "@microsoft/teams-js": "2.9.1"
+    },
+    "version": "1.17.1",
+    "libraryName": "accordion-wp",
+    "libraryId": "c9d13037-c956-4dbb-b8bf-4d8c697fa017",
+    "environment": "spo",
+    "packageManager": "npm",
+    "solutionName": "accordion-wp",
+    "solutionShortDescription": "accordion-wp description",
+    "skipFeatureDeployment": true,
+    "isDomainIsolated": false,
+    "componentType": "webpart"
+  }
+}
